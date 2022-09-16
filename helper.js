@@ -1,0 +1,30 @@
+import { TIMEOUT_SEC } from './config.js'
+
+
+const renderError = function(mark) {
+  god.insertAdjacentText('beforeend', mark);
+}
+
+const timeout = function (s) {
+    return new Promise(function (_, reject) {
+        setTimeout(function () {
+        reject(new Error(`REquest took too long! Timeout after ${s} second` ));
+        }, s * 1000); 
+    });
+};
+
+
+export const getJSON = async function(url) {
+   try {
+     const res = await Promise.race([fetch (url), timeout(TIMEOUT_SEC)]);
+     if(!res.ok) throw new Error ('No recipe found')
+     console.log(res)
+    const data = await res.json();
+
+return data; 
+}catch(err) {
+throw err;
+   }
+};
+
+
